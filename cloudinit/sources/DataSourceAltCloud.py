@@ -90,6 +90,7 @@ class DataSourceAltCloud(sources.DataSource):
     def __init__(self, sys_cfg, distro, paths):
         sources.DataSource.__init__(self, sys_cfg, distro, paths)
         self.seed = None
+        self.dsmode = DSMODE_LOCAL
         self.supported_seed_starts = ("/", "file://")
 
     def __str__(self):
@@ -249,9 +250,7 @@ class DataSourceAltCloud(sources.DataSource):
                mount /dev/fd0 <tmp mount dir>
                The call back passed to util.mount_cb will do:
                    read <tmp mount dir>/<user_data_file>
-        '''
 
-        return_str = None
         cdrom_list = util.find_devs_with('LABEL=CDROM')
         for cdrom_dev in cdrom_list:
             try:
@@ -264,11 +263,14 @@ class DataSourceAltCloud(sources.DataSource):
             except util.MountFailedError:
                 util.logexc(LOG, "Failed to mount %s when looking for user "
                             "data", cdrom_dev)
-
+        '''
         #no cdrom data 
+        return_str = None
         if not return_str:
-            guestinfo_user_data = os.popen('/sbin/vmtoolsd --cmd "info-get guestinfo.userdata"').read()
-            return_str = base64.decode( guestinfo_user_data)
+            guestinfo_user_data = os.popen('/sbin/vmtoolsd --cmd \
+                "info-get guestinfo.userdata"').read()
+            return_str = base64.decodestring(guestinfo_user_data)
+            LOG.debug('userdata = %s' %(return_str))
         self.userdata_raw = return_str
         self.metadata = META_DATA_NOT_SUPPORTED
 
@@ -282,7 +284,7 @@ class DataSourceAltCloud(sources.DataSource):
 # In the future 'dsmode' like behavior can be added to offer user
 # the ability to run before networking.
 datasources = [
-    (DataSourceAltCloud, (sources.DEP_FILESYSTEM, sources.DEP_NETWORK)),
+    (DataSourceAltCloud, (sources.DEP_FILESYSTEM)),
 ]
 
 
