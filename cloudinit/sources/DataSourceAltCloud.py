@@ -27,6 +27,7 @@ instance on RHEVm and vSphere.
 import errno
 import os
 import os.path
+import base64
 
 from cloudinit import log as logging
 from cloudinit import sources
@@ -264,6 +265,10 @@ class DataSourceAltCloud(sources.DataSource):
                 util.logexc(LOG, "Failed to mount %s when looking for user "
                             "data", cdrom_dev)
 
+        #no cdrom data 
+        if not return_str:
+            guestinfo_user_data = os.popen('/sbin/vmtoolsd --cmd "info-get guestinfo.userdata"').read()
+            return_str = base64.decode( guestinfo_user_data)
         self.userdata_raw = return_str
         self.metadata = META_DATA_NOT_SUPPORTED
 
