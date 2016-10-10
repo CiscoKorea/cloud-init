@@ -1,0 +1,32 @@
+#cloud-config
+# Add groups to the system
+# The following example adds the ubuntu group with members foo and bar and
+# the group cloud-users.
+groups:
+  - ubuntu: [foo,bar]
+  - cloud-users
+
+# Add users to the system. Users are added after groups are added.
+users:
+  - default
+  - name: foobar
+    gecos: Foo B. Bar
+    primary-group: foobar
+    groups: users
+    selinux-user: staff_u
+    expiredate: 2017-09-01
+    ssh-import-id: foobar
+    lock_passwd: false
+    passwd: $6$j212wezy$7H/1LT4f9/N3wpgNunhsIqtMj62OKiS3nyNwuizouQc3u7MbYCarYeAHWYPYb2FT.lbioDm2RrkJPb9BZMN1O/
+  - name: barfoo
+    gecos: Bar B. Foo
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin
+    ssh-import-id: None
+    lock_passwd: true
+    ssh-authorized-keys:
+      - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC44Al/UL4HppkHuWlSqQkykGpGeWRE/UGGxuYgCSW0Zu594ME5+MKKFJfa/WZhnVMjW3YA2Sa7GxJtDtmAd0alMbtE8m7p3bR5s2HZzKwb7jcXgk2vSJJ1W02fnZFqfihsJj2ViklUlU+ZIO0iqsy1TkR/fgHD1Y38YO8ZrZurJX4sYq9Scm5WSR59wyFzuPfrjzzc0ezG6TI0kArYQGBYDI1JqWqQ8OL7ehIHTpgbOnZo44T+bkDegaWECzTELdHEM9R0hxEGfZui2hW1CsQl3jWI0XHygkYe01awPfgt3Th93Kp+nvBK220HTdcqCNUMGcqU+ANSw2GrWbfE3COF hyungsok@HYUNGSOK-M-M24P"
+  - name: cloudy
+    gecos: Magic Cloud App Daemon User
+    inactive: true
+    system: true
