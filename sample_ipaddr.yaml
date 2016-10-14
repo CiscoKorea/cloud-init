@@ -1,0 +1,10 @@
+#cloud-config
+ipaddr:
+  - name : eno16777984
+    mode : static
+    address : 10.0.0.10/24
+    gateway : 10.0.0.1
+  - ifnum : 1
+    mode : dhcp
+  - ifnum : 2
+    mode : none
